@@ -12,24 +12,24 @@ object KafkaSource {
         val env = StreamExecutionEnvironment.getExecutionEnvironment
 
         val properties = new Properties()
-        properties.setProperty("bootstrap.servers", "ioubuy-bd-02:9092")
+        properties.setProperty("bootstrap.servers", "hadoop1:9092")
         properties.setProperty("group.id", "consumer-group2")
-        properties.setProperty("zookeeper.connect", "ioubuy-bd-02:2281")
+        properties.setProperty("zookeeper.connect", "hadoop1:2181")
         properties.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
         properties.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
         properties.setProperty("auto.offset.reset", "earliest")
 
         /**
          * 查看 Kafka topic
-         *  kafka-topics --zookeeper 119.23.32.151:2281 --list
+         *  kafka-topics --zookeeper hadoop1:2281 --list
          * 查看详情
-         *  kafka-topics --zookeeper 119.23.32.151:2281 --describe --topic sensor
+         *  kafka-topics --zookeeper hadoop1:2181 --describe --topic sensor
          * 创建 topic
-         *  kafka-topics --zookeeper 119.23.32.151:2281 --create --replication-factor 3 --partitions 1 --topic sensor
+         *  kafka-topics --zookeeper hadoop1:2181 --create --replication-factor 3 --partitions 1 --topic sensor
          * 生产消息
-         *  kafka-console-producer --broker-list ioubuy-bd-02:9092 --topic sensor
+         *  kafka-console-producer --broker-list hadoop1:9092 --topic sensor
          * 消费消息
-         *  kafka-console-consumer --bootstrap-server ioubuy-bd-02:9092 --from-beginning --topic sensor
+         *  kafka-console-consumer --bootstrap-server hadoop1:9092 --from-beginning --topic sensor
          */
         val kafkaStream = env.addSource(new FlinkKafkaConsumer011[String]("sensor", new SimpleStringSchema(), properties))
 
