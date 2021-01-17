@@ -4,6 +4,7 @@ import com.kino.mode.SensorReading
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.scala._
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011
 
 import java.util.Properties
@@ -35,6 +36,8 @@ object TumblingWindowTest {
     // 将样例类转换成 元祖, 然后做 keyBy, 设置 15s 一个窗口
     val outputSteam: DataStream[(String, Double)] = dataStream
       .map(x => (x.id, x.temperature))
+//       如果不进行 keyBy 就开窗, 需要用 .windowAll 函数, 传入 WindowAssigner 的实现类
+//      .windowAll(TumblingEventTimeWindows.of(Time.seconds(15)))
       .keyBy(_._1)
       .timeWindow(Time.seconds(15))
       .reduce((x1, x2) => (x1._1, x1._2.min(x2._2)))
